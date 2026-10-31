@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>คอร์สแวร์ วิทยาการคำนวณ ป.5</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--c1:#0e9f8e;--c1d:#0a7a6d;--c2:#ff8a3d;--bg:#f2faf8;--ink:#1d2b2a;--mut:#5f7270;--line:#d5e6e3;--ok:#1f9d55;--err:#d64545;--card:#fff}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font-family:'Sarabun','Noto Sans Thai',Tahoma,sans-serif;font-size:18px;line-height:1.6;color:var(--ink);background:var(--bg)}
+a{color:var(--c1d)}
+h1,h2,h3{line-height:1.3;margin:.2em 0 .5em}
+h2{font-size:1.5rem}
+.muted{color:var(--mut)}
+header.top{background:var(--c1);color:#fff;padding:.5rem 1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+header.top .brand{font-weight:700;font-size:1.1rem}
+header.top nav{display:flex;gap:.25rem;flex-wrap:wrap;flex:1}
+header.top nav a{color:#fff;text-decoration:none;padding:.3rem .8rem;border-radius:999px;font-size:.95rem}
+header.top nav a.on,header.top nav a:hover{background:rgba(255,255,255,.25)}
+.me{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.me a{color:#fff;text-decoration:none;display:flex;align-items:center;gap:.5rem}
+.avatar{width:38px;height:38px;border-radius:50%;background:#fff;color:var(--c1d);display:inline-flex;align-items:center;justify-content:center;font-weight:700;object-fit:cover;border:2px solid #fff}
+.avatar.big{width:110px;height:110px;font-size:2.4rem}
+main{max-width:1100px;margin:0 auto;padding:1rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1rem 1.2rem;margin:.8rem 0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+.lcard{display:block;text-decoration:none;color:inherit;background:#fff;border:2px solid var(--line);border-radius:18px;padding:1rem;transition:.15s}
+.lcard:hover{border-color:var(--c1);transform:translateY(-2px)}
+.lcard .ic{font-size:2.2rem}
+.bar{height:12px;background:#e4efed;border-radius:99px;overflow:hidden;margin:.4rem 0}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--c1),#5fd3c3)}
+.btn{background:var(--c1);color:#fff;border:0;border-radius:12px;padding:.5rem 1.1rem;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--c1d)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:#fff;color:var(--c1d);border:2px solid var(--c1)}
+.btn.warn{background:var(--c2)}
+.btn.danger{background:var(--err)}
+.btn.sm{padding:.2rem .7rem;font-size:.9rem;border-radius:8px}
+input[type=text],input[type=password],input[type=email],input[type=number],input[type=date],select,textarea{width:100%;font:inherit;padding:.5rem .7rem;border:2px solid var(--line);border-radius:10px;background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--c1)}
+label.f{display:block;font-weight:600;margin:.6rem 0 .2rem}
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0}
+.tabs button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:.35rem 1rem;font:inherit;cursor:pointer}
+.tabs button.on{background:var(--c1);color:#fff;border-color:var(--c1)}
+.notice{padding:.6rem 1rem;border-radius:10px;margin:.6rem 0;background:#e8f6ff;border:1px solid #bfe2f7}
+.notice.err{background:#fdeaea;border-color:#f3bcbc;color:#8b1f1f}
+.notice.ok{background:#e6f7ec;border-color:#b7e3c6}
+.badge{display:inline-block;border-radius:999px;padding:.05rem .7rem;font-size:.85rem;font-weight:600;background:#eee}
+.badge.ok{background:#d9f4e3;color:#146c3b}.badge.wait{background:#fff0d6;color:#8a5a00}.badge.no{background:#fde0e0;color:#8b1f1f}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
+.login-card{max-width:440px;width:100%}
+.lesson{font-size:1.1rem}
+.lesson ul,.lesson ol{padding-left:1.4rem}
+.lesson table{border-collapse:collapse;margin:.6rem 0;width:100%}
+.lesson th,.lesson td{border:1px solid var(--line);padding:.3rem .6rem;text-align:left}
+.lesson th{background:#eaf6f3}
+.lesson .tip{background:#fff6e5;border-left:5px solid var(--c2);padding:.5rem .9rem;border-radius:8px;margin:.7rem 0}
+.lesson .ex{background:#eef9f7;border-left:5px solid var(--c1);padding:.5rem .9rem;border-radius:8px;margin:.7rem 0}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:1rem}
+.dots{display:flex;gap:6px;margin-bottom:.4rem}
+.dots i{width:28px;height:8px;border-radius:9px;background:#dbe9e6}.dots i.on{background:var(--c1)}
+fieldset.q{border:2px solid var(--line);border-radius:14px;margin:.8rem 0;padding:.6rem 1rem}
+fieldset.q.right{border-color:var(--ok);background:#f1fbf5}
+fieldset.q.wrong{border-color:var(--err);background:#fff5f5}
+fieldset.q legend{font-weight:700;padding:0 .4rem}
+label.opt{display:block;padding:.25rem .3rem;cursor:pointer;border-radius:8px}
+label.opt:hover{background:#f0f8f6}
+label.opt input{margin-right:.5rem;transform:scale(1.2)}
+.expl{margin-top:.4rem;font-size:.95rem}
+.score{font-size:1.5rem;font-weight:700}
+table.data{border-collapse:collapse;width:100%;font-size:.92rem}
+table.data th,table.data td{border:1px solid var(--line);padding:.3rem .5rem;text-align:left;vertical-align:top}
+table.data th{background:#eaf6f3;position:sticky;top:0}
+.scroll{overflow:auto;max-height:70vh;border-radius:10px}
+.row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.row>*{flex:0 0 auto}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+@media(max-width:640px){.two{grid-template-columns:1fr}body{font-size:17px}}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#223;color:#fff;padding:.6rem 1.2rem;border-radius:12px;z-index:50;max-width:90vw;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.toast.err{background:var(--err)}.toast.ok{background:var(--ok)}
+.loading{padding:2rem;text-align:center;color:var(--mut)}
+.back{display:inline-block;margin-bottom:.4rem;text-decoration:none}
+.chart{display:flex;align-items:flex-end;gap:1.2rem;height:170px;border-left:3px solid #556;border-bottom:3px solid #556;padding:0 1rem;margin:.8rem 0}
+.chart div{width:70px;background:var(--c1);color:#fff;text-align:center;border-radius:6px 6px 0 0;font-weight:700}
+.chart-l{display:flex;gap:1.2rem;padding:0 1rem}.chart-l span{width:70px;text-align:center;font-size:.9rem}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* =====================================================================
+   ตั้งค่า: แก้ 3 ค่านี้ก่อนใช้งาน (ดูคู่มือขั้นที่ 5)
+   ===================================================================== */
+const CFG = {
+  SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
+  SUPABASE_ANON_KEY: 'YOUR-ANON-OR-PUBLISHABLE-KEY',
+  EMAIL_DOMAIN: 'nongsaeng.example.com',   // อีเมลสมมติของนักเรียน = <รหัส 11 หลัก>@โดเมนนี้
+  COURSE_TITLE: 'วิทยาการคำนวณ ป.5 (ว20133)',
+  SCHOOL: 'โรงเรียนหนองแสง'
+};
+
+/* =====================================================================
+   เนื้อหาบทเรียน (แก้ไขได้ที่นี่ ผู้สอนควรตรวจก่อนใช้จริง)
+   key ต้องตรงกับตาราง lessons ในฐานข้อมูล: L1-L4
+   ===================================================================== */
+const LESSONS = [
+{key:'L1', icon:'🧩', title:'ขั้นตอนวิธีและการแก้ปัญหา', sections:[
+ {t:'ขั้นตอนวิธีคืออะไร', html:`
+  <p><b>ขั้นตอนวิธี (Algorithm)</b> คือ ลำดับขั้นตอนการทำงานที่ชัดเจน เพื่อแก้ปัญหาหรือทำงานให้สำเร็จ</p>
+  <div class="ex"><b>ตัวอย่าง: การทำไข่ดาว</b> (ให้ผู้ใหญ่ช่วยเมื่อใช้เตาไฟ)
+   <ol><li>ตั้งกระทะและใส่น้ำมัน</li><li>ตอกไข่ลงในกระทะ</li><li>รอให้ไข่สุก</li><li>ตักไข่ใส่จาน</li></ol></div>
+  <p>ถ้าสลับลำดับ เช่น ตักไข่ใส่จานก่อนตอกไข่ ก็จะทำงานไม่สำเร็จ ดังนั้น <b>ลำดับ</b> จึงสำคัญมาก</p>`},
+ {t:'ลักษณะของขั้นตอนวิธีที่ดี', html:`
+  <ul><li><b>ชัดเจน</b> อ่านแล้วเข้าใจตรงกัน ไม่คลุมเครือ</li>
+  <li><b>เรียงลำดับ</b> รู้ว่าอะไรทำก่อน อะไรทำหลัง</li>
+  <li><b>มีจุดเริ่มต้นและจุดสิ้นสุด</b> ไม่ทำวนไม่รู้จบ</li>
+  <li><b>ได้ผลลัพธ์ตามต้องการ</b> เมื่อทำตามครบทุกขั้น</li></ul>
+  <div class="tip">💡 ลองคิดดู: ถ้าสั่งหุ่นยนต์ว่า "เดินไปที่ประตู" โดยไม่บอกว่ากี่ก้าวและไปทางไหน หุ่นยนต์จะทำได้ไหม?</div>`},
+ {t:'ขั้นตอนการแก้ปัญหา', html:`
+  <ol><li><b>เข้าใจปัญหา</b> ปัญหาคืออะไร ต้องการผลลัพธ์อะไร</li>
+  <li><b>วางแผน</b> คิดและเขียนขั้นตอนวิธี</li>
+  <li><b>ลงมือทำ</b> ทำตามแผน</li>
+  <li><b>ตรวจสอบและปรับปรุง</b> ผลลัพธ์ถูกต้องไหม ถ้าไม่ถูก แก้ขั้นตอนที่ผิด</li></ol>
+  <p>เราเขียนขั้นตอนวิธีได้หลายแบบ เช่น เขียนเป็นข้อความ หรือเขียนเป็น <b>ผังงาน</b> (บทที่ 2)</p>`}
+]},
+{key:'L2', icon:'🔀', title:'ผังงานและโครงสร้างการทำงาน', sections:[
+ {t:'สัญลักษณ์ในผังงาน', html:`
+  <p><b>ผังงาน (Flowchart)</b> คือภาพที่ใช้สัญลักษณ์และลูกศรแสดงลำดับการทำงาน</p>
+  <table><tr><th>สัญลักษณ์</th><th>ความหมาย</th></tr>
+  <tr><td>⬭ วงรี</td><td>จุดเริ่มต้น / จุดสิ้นสุด</td></tr>
+  <tr><td>▭ สี่เหลี่ยมผืนผ้า</td><td>การทำงานหรือการประมวลผล</td></tr>
+  <tr><td>◇ สี่เหลี่ยมขนมเปียกปูน</td><td>การตัดสินใจ / เงื่อนไข</td></tr>
+  <tr><td>➜ ลูกศร</td><td>ทิศทางของการทำงาน</td></tr></table>`},
+ {t:'โครงสร้าง 3 แบบ', html:`
+  <ul><li><b>ลำดับ</b> ทำทีละขั้นตามลำดับ เช่น เปิดน้ำ → ฟอกสบู่ → ล้างมือ</li>
+  <li><b>เงื่อนไข</b> เลือกทำตามสถานการณ์ เช่น ถ้าฝนตก ให้กางร่ม มิฉะนั้นเดินตามปกติ</li>
+  <li><b>การทำซ้ำ</b> ทำสิ่งเดิมหลายครั้ง เช่น ทำซ้ำ 5 ครั้ง: เดินไปข้างหน้า 1 ก้าว</li></ul>
+  <div class="tip">💡 การทำซ้ำช่วยให้เขียนคำสั่งสั้นลง ไม่ต้องเขียนคำสั่งเดิมหลายบรรทัด</div>`},
+ {t:'ตัวอย่างผังงาน: ถ้าฝนตกให้กางร่ม', html:`
+  <svg viewBox="0 0 360 330" role="img" aria-label="ผังงานตัวอย่าง ถ้าฝนตกให้กางร่ม" style="max-width:380px;width:100%">
+   <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#334"/></marker></defs>
+   <ellipse cx="180" cy="24" rx="60" ry="20" fill="#d7f3e3" stroke="#334"/><text x="180" y="30" text-anchor="middle" font-size="15">เริ่มต้น</text>
+   <line x1="180" y1="44" x2="180" y2="76" stroke="#334" marker-end="url(#ar)"/>
+   <polygon points="180,78 270,120 180,162 90,120" fill="#fff0c9" stroke="#334"/><text x="180" y="125" text-anchor="middle" font-size="15">ฝนตกหรือไม่?</text>
+   <polyline points="90,120 60,120 60,190" fill="none" stroke="#334" marker-end="url(#ar)"/><text x="62" y="112" font-size="14">ใช่</text>
+   <polyline points="270,120 300,120 300,190" fill="none" stroke="#334" marker-end="url(#ar)"/><text x="268" y="112" font-size="14">ไม่ใช่</text>
+   <rect x="10" y="192" width="100" height="40" rx="4" fill="#e3f0ff" stroke="#334"/><text x="60" y="217" text-anchor="middle" font-size="15">กางร่ม</text>
+   <rect x="245" y="192" width="110" height="40" rx="4" fill="#e3f0ff" stroke="#334"/><text x="300" y="217" text-anchor="middle" font-size="15">เดินตามปกติ</text>
+   <polyline points="60,232 60,300 118,300" fill="none" stroke="#334" marker-end="url(#ar)"/>
+   <polyline points="300,232 300,300 242,300" fill="none" stroke="#334" marker-end="url(#ar)"/>
+   <ellipse cx="180" cy="300" rx="60" ry="20" fill="#d7f3e3" stroke="#334"/><text x="180" y="306" text-anchor="middle" font-size="15">สิ้นสุด</text>
+  </svg>
+  <p>สังเกตว่าที่สี่เหลี่ยมขนมเปียกปูนมี <b>2 ทางออก</b> คือ ใช่ และ ไม่ใช่ แล้วมาจบที่จุดเดียวกัน</p>`}
+]},
+{key:'L3', icon:'📊', title:'ข้อมูลและการนำเสนอข้อมูล', sections:[
+ {t:'ข้อมูลและสารสนเทศ', html:`
+  <p><b>ข้อมูล (Data)</b> คือข้อเท็จจริงดิบ เช่น ตัวเลข ข้อความ ที่ยังไม่ได้จัดระเบียบ</p>
+  <p><b>สารสนเทศ (Information)</b> คือข้อมูลที่ผ่านการประมวลผลจนมีความหมาย และนำไปใช้ประโยชน์ได้</p>
+  <div class="ex">ข้อมูล: ส้ม 8 คน, กล้วย 5 คน, มะม่วง 12 คน<br>สารสนเทศ: นักเรียนห้องนี้ชอบมะม่วงมากที่สุด</div>`},
+ {t:'การรวบรวมข้อมูล', html:`
+  <ul><li><b>การสังเกต</b> เช่น นับจำนวนรถที่ผ่านหน้าโรงเรียน</li>
+  <li><b>การสำรวจ / การสอบถาม</b> เช่น ถามเพื่อนว่าชอบผลไม้ชนิดใด</li>
+  <li><b>การสัมภาษณ์</b> เช่น คุยกับคุณครูหรือผู้ปกครองเพื่อหาข้อมูล</li>
+  <li><b>การค้นหาจากแหล่งความรู้</b> เช่น หนังสือ ห้องสมุด เว็บไซต์ที่เชื่อถือได้</li></ul>
+  <div class="tip">💡 ก่อนเก็บข้อมูล ควรรู้ก่อนว่า "ต้องการรู้อะไร" และ "จะถามใคร"</div>`},
+ {t:'การนำเสนอข้อมูล', html:`
+  <p>ข้อมูลที่เก็บมาควรจัดให้อ่านง่าย เช่น ตาราง และแผนภูมิแท่ง</p>
+  <table><tr><th>ผลไม้</th><th>จำนวนนักเรียน (คน)</th></tr><tr><td>ส้ม</td><td>8</td></tr><tr><td>กล้วย</td><td>5</td></tr><tr><td>มะม่วง</td><td>12</td></tr></table>
+  <div class="chart"><div style="height:${8/12*100}%">8</div><div style="height:${5/12*100}%">5</div><div style="height:100%">12</div></div>
+  <div class="chart-l"><span>ส้ม</span><span>กล้วย</span><span>มะม่วง</span></div>
+  <p>แผนภูมิแท่งช่วยให้เปรียบเทียบได้ทันทีว่าแท่งไหนสูงที่สุด</p>`}
+]},
+{key:'L4', icon:'🛡️', title:'ความปลอดภัยและความรับผิดชอบเมื่อใช้เทคโนโลยี', sections:[
+ {t:'ข้อมูลส่วนตัวและรหัสผ่าน', html:`
+  <ul><li>ไม่บอก <b>รหัสผ่าน</b> ที่อยู่บ้าน เบอร์โทร หรือโรงเรียน กับคนแปลกหน้าออนไลน์</li>
+  <li>รหัสผ่านที่ดีควรผสมตัวอักษรและตัวเลข และไม่ใช้ชื่อหรือวันเกิดของตนเอง</li>
+  <li>ไม่บอกรหัสผ่านกับเพื่อน (บอกได้เฉพาะผู้ปกครองหรือครูที่ไว้ใจ)</li>
+  <li>ออกจากระบบทุกครั้งเมื่อใช้เครื่องที่ใช้ร่วมกัน</li></ul>`},
+ {t:'ใช้อินเทอร์เน็ตอย่างปลอดภัย', html:`
+  <ul><li>ถ้ามีคนแปลกหน้าชวนไปพบตัวต่อตัว <b>ไม่ตอบรับ</b> และบอกผู้ใหญ่ทันที</li>
+  <li>ข้อมูลบนอินเทอร์เน็ตไม่จริงเสมอไป ควรตรวจสอบจากหลายแหล่ง</li>
+  <li>ถ้าเห็นการรังแกกันออนไลน์ ไม่แชร์ ไม่ตอบโต้ และบอกครูหรือผู้ใหญ่ที่ไว้ใจ</li>
+  <li>ใช้คำพูดสุภาพ เพราะข้อความที่โพสต์แล้วอาจลบไม่หมด</li></ul>`},
+ {t:'ลิขสิทธิ์และการอ้างอิง', html:`
+  <p>ภาพ เพลง วิดีโอ และข้อความทุกอย่างมีเจ้าของผลงาน</p>
+  <ul><li>ไม่คัดลอกผลงานคนอื่นแล้วบอกว่าเป็นของตนเอง</li>
+  <li>ตรวจสอบว่าอนุญาตให้ใช้ได้หรือไม่ และ <b>ระบุแหล่งที่มา</b> ทุกครั้ง</li>
+  <li>เลือกใช้ผลงานที่เจ้าของอนุญาตให้นำไปใช้ได้</li></ul>
+  <div class="ex">ตัวอย่างการอ้างอิง: "ภาพจาก ชื่อเว็บไซต์ (เข้าถึงเมื่อ วันที่ เดือน ปี)"</div>`}
+]}
+];
+
+/* =====================================================================
+   ตัวช่วยพื้นฐาน
+   ===================================================================== */
+const IS_CFG = !/YOUR-/.test(CFG.SUPABASE_URL + CFG.SUPABASE_ANON_KEY);
+const sb = IS_CFG ? supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY) : null;
+const S = { session: null, profile: null, avatarUrl: null, flash: null };
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const isT = () => S.profile && S.profile.role === 'teacher';
+const isStudent = () => S.profile && S.profile.role === 'student';
+const lessonTitle = k => { const i = LESSONS.findIndex(l => l.key === k); return i < 0 ? '-' : `บทที่ ${i+1} ${LESSONS[i].title}`; };
+const fmtDate = d => d ? new Date(d).toLocaleString('th-TH', {dateStyle:'medium', timeStyle:'short'}) : '-';
+const fmtDay = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('th-TH', {dateStyle:'medium'}) : '-';
+const pct = p => !p ? 0 : (p.completed ? 100 : Math.round(100 * p.sections_done / p.sections_total));
+
+async function must(p) { const r = await p; if (r.error) throw r.error; return r.data; }
+
+function toast(msg, type = 'ok') {
+  const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), type === 'err' ? 5000 : 2500);
+}
+function thaiErr(e) {
+  const m = (e && e.message) || String(e);
+  if (/Invalid login credentials/i.test(m)) return 'รหัสนักเรียน/อีเมล หรือรหัสผ่านไม่ถูกต้อง';
+  if (/already registered/i.test(m)) return 'รหัสนี้ถูกใช้สมัครแล้ว';
+  if (/at least \d+ char/i.test(m)) return 'รหัสผ่านสั้นเกินไป (อย่างน้อย 6 ตัวอักษร)';
+  if (/Database error saving new user/i.test(m)) return 'สมัครไม่ได้: รหัสนี้ไม่อยู่ในรายชื่อหรือถูกใช้แล้ว';
+  if (/rate limit|too many/i.test(m)) return 'ลองบ่อยเกินไป กรุณารอสักครู่';
+  if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return 'เชื่อมต่ออินเทอร์เน็ตไม่ได้';
+  if (/row-level security|permission denied/i.test(m)) return 'ไม่มีสิทธิ์ทำรายการนี้';
+  if (/exceeded the maximum|too large|Payload/i.test(m)) return 'ไฟล์ใหญ่เกินกำหนด';
+  if (/mime type/i.test(m)) return 'ชนิดไฟล์นี้ไม่รองรับ';
+  return m;
+}
+async function act(btn, fn) {
+  if (btn) { btn.disabled = true; btn.dataset.t = btn.textContent; btn.textContent = 'กำลังทำงาน...'; }
+  try { await fn(); } catch (e) { console.error(e); toast(thaiErr(e), 'err'); }
+  finally { if (btn && btn.isConnected) { btn.disabled = false; btn.textContent = btn.dataset.t; } }
+}
+async function signed(bucket, path, secs = 3600) {
+  const { data, error } = await sb.storage.from(bucket).createSignedUrl(path, secs);
+  if (error) throw error; return data.signedUrl;
+}
+async function openFile(bucket, path) {
+  const w = window.open('', '_blank');
+  try { const u = await signed(bucket, path, 300); if (w) w.location.href = u; else location.href = u; }
+  catch (e) { if (w) w.close(); toast(thaiErr(e), 'err'); }
+}
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-open]');
+  if (a) { e.preventDefault(); openFile(a.dataset.bucket, a.dataset.open); }
+});
+function safeName(n) { return n.replace(/[^A-Za-z0-9._-]/g, '_').slice(-80); }
+function extOf(n) { const m = /\.([A-Za-z0-9]+)$/.exec(n); return m ? m[1].toLowerCase() : ''; }
+function downloadCSV(name, rows) {
+  const cell = c => { c = String(c ?? ''); if (/^[=+\-@]/.test(c)) c = "'" + c; return /[",\n\r]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; };
+  const csv = '\ufeff' + rows.map(r => r.map(cell).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+}
+function mediaIcon(m) {
+  const t = m || '';
+  return t.startsWith('image/') ? '🖼️' : t.startsWith('video/') ? '🎬' : t.startsWith('audio/') ? '🎵' : t === 'application/pdf' ? '📄' : '📎';
+}
+function mediaItem(m, withDel) {
+  return `<div class="card row" style="justify-content:space-between"><div style="flex:1;min-width:200px">
+    <b>${mediaIcon(m.mime_type)} ${esc(m.title)}</b> ${m.lesson_key ? `<span class="badge">${esc(lessonTitle(m.lesson_key))}</span>` : ''}
+    <div class="muted">${esc(m.description || '')} <small>(${esc(m.file_name)})</small></div></div>
+    <div class="row"><button class="btn sm" data-open="${esc(m.storage_path)}" data-bucket="media">เปิดดู</button>
+    ${withDel ? `<button class="btn sm danger" data-del-media="${esc(m.id)}" data-path="${esc(m.storage_path)}">ลบ</button>` : ''}</div></div>`;
+}
+
+/* =====================================================================
+   เข้าสู่ระบบ / สมัคร
+   ===================================================================== */
+function loginView() {
+  return `<div class="login"><div class="card login-card">
+  <h1>🖥️ ${esc(CFG.COURSE_TITLE)}</h1><p class="muted">${esc(CFG.SCHOOL)}</p>
+  ${S.flash ? `<div class="notice err">${esc(S.flash)}</div>` : ''}
+  <div class="tabs" id="ltabs"><button data-t="login">เข้าสู่ระบบ</button><button data-t="reg">สมัครครั้งแรก</button><button data-t="teacher">ผู้สอน</button></div>
+
+  <form class="pane" data-p="login" id="f-login">
+    <label class="f">รหัสนักเรียน 11 หลัก</label><input name="sid" type="text" inputmode="numeric" autocomplete="username" maxlength="11" required>
+    <label class="f">รหัสผ่าน</label><input name="pw" type="password" autocomplete="current-password" required>
+    <p><button class="btn" type="submit">เข้าสู่ระบบ</button></p>
+  </form>
+
+  <form class="pane" data-p="reg" id="f-reg">
+    <div class="notice">สมัครได้ครั้งเดียว ใช้รหัสนักเรียน 11 หลักที่อยู่ในรายชื่อรายวิชา และตั้งรหัสผ่านที่จำได้ (อย่างน้อย 6 ตัวอักษร)</div>
+    <label class="f">รหัสนักเรียน 11 หลัก</label><input name="sid" type="text" inputmode="numeric" maxlength="11" required>
+    <label class="f">ตั้งรหัสผ่าน</label><input name="pw" type="password" autocomplete="new-password" minlength="6" required>
+    <label class="f">พิมพ์รหัสผ่านอีกครั้ง</label><input name="pw2" type="password" autocomplete="new-password" minlength="6" required>
+    <p><button class="btn warn" type="submit">สมัครใช้งาน</button></p>
+  </form>
+
+  <form class="pane" data-p="teacher" id="f-teacher">
+    <label class="f">อีเมลผู้สอน</label><input name="email" type="email" autocomplete="username" required>
+    <label class="f">รหัสผ่าน</label><input name="pw" type="password" autocomplete="current-password" required>
+    <p><button class="btn" type="submit">เข้าสู่ระบบผู้สอน</button></p>
+  </form>
+  </div></div>`;
+}
+function bindLogin() {
+  const tabs = [...document.querySelectorAll('#ltabs button')];
+  const show = t => { tabs.forEach(b => b.classList.toggle('on', b.dataset.t === t));
+    document.querySelectorAll('.pane').forEach(p => p.hidden = p.dataset.p !== t); };
+  tabs.forEach(b => b.onclick = () => show(b.dataset.t)); show('login');
+  document.querySelectorAll('input[name=sid]').forEach(i => i.addEventListener('input', () => { i.value = i.value.replace(/\D/g, '').slice(0, 11); }));
+  const sidEmail = sid => sid + '@' + CFG.EMAIL_DOMAIN;
+  const btnOf = e => e.target.querySelector('button[type=submit]');
+
+  $('#f-login').onsubmit = e => { e.preventDefault(); const f = e.target;
+    act(btnOf(e), async () => {
+      const sid = f.sid.value;
+      if (!/^\d{11}$/.test(sid)) throw new Error('รหัสนักเรียนต้องเป็นตัวเลข 11 หลัก');
+      const { data, error } = await sb.auth.signInWithPassword({ email: sidEmail(sid), password: f.pw.value });
+      if (error) throw error; S.flash = null; await onSession(data.session);
+    }); };
+
+  $('#f-reg').onsubmit = e => { e.preventDefault(); const f = e.target;
+    act(btnOf(e), async () => {
+      const sid = f.sid.value;
+      if (!/^\d{11}$/.test(sid)) throw new Error('รหัสนักเรียนต้องเป็นตัวเลข 11 หลัก');
+      if (f.pw.value.length < 6) throw new Error('รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร');
+      if (f.pw.value !== f.pw2.value) throw new Error('รหัสผ่านสองครั้งไม่ตรงกัน');
+      const st = await must(sb.rpc('check_student_id', { p_id: sid }));
+      if (st === 'not_found') throw new Error('ไม่พบรหัสนี้ในรายชื่อรายวิชา กรุณาตรวจสอบกับครู');
+      if (st === 'taken') throw new Error('รหัสนี้ถูกใช้สมัครแล้ว ถ้าลืมรหัสผ่านให้แจ้งครู');
+      if (st !== 'ok') throw new Error('รหัสนักเรียนไม่ถูกต้อง');
+      const { data, error } = await sb.auth.signUp({ email: sidEmail(sid), password: f.pw.value });
+      if (error) throw error;
+      if (!data.session) throw new Error('สมัครแล้วแต่เข้าระบบไม่ได้ (ระบบยังเปิด Confirm email) กรุณาแจ้งครู');
+      S.flash = null; await onSession(data.session); toast('สมัครสำเร็จ ยินดีต้อนรับ!');
+    }); };
+
+  $('#f-teacher').onsubmit = e => { e.preventDefault(); const f = e.target;
+    act(btnOf(e), async () => {
+      const { data, error } = await sb.auth.signInWithPassword({ email: f.email.value.trim(), password: f.pw.value });
+      if (error) throw error; S.flash = null; await onSession(data.session);
+    }); };
+}
+
+async function onSession(session) {
+  S.session = session; S.profile = null; S.avatarUrl = null;
+  if (session) {
+    const { data } = await sb.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
+    if (!data) {
+      await sb.auth.signOut(); S.session = null;
+      S.flash = 'บัญชีนี้ยังไม่ได้รับสิทธิ์ใช้งาน กรุณาแจ้งครู';
+    } else {
+      S.profile = data;
+      if (data.avatar_path) { try { S.avatarUrl = await signed('avatars', data.avatar_path); } catch (e) { /* ไม่เป็นไร */ } }
+    }
+  }
+  if (S.profile) { const h = location.hash; if (!h || h === '#/login') location.hash = isT() ? '#/t/summary' : '#/home'; }
+  render();
+}
+async function logout() { await sb.auth.signOut(); S.session = null; S.profile = null; S.avatarUrl = null; location.hash = ''; render(); }
+
+/* =====================================================================
+   โครงหน้า + ตัวจัดเส้นทาง
+   ===================================================================== */
+function render() {
+  const app = $('#app');
+  if (!IS_CFG) { app.innerHTML = `<main><div class="notice err"><b>ยังไม่ได้ตั้งค่า</b><br>เปิดไฟล์นี้ด้วยโปรแกรมแก้ไขข้อความ แล้วแก้ SUPABASE_URL และ SUPABASE_ANON_KEY ที่ส่วนบนของสคริปต์ (ดูคู่มือขั้นที่ 5)</div></main>`; return; }
+  if (!S.profile) { app.innerHTML = loginView(); bindLogin(); return; }
+  const nav = isT()
+    ? [['#/t/summary','📊 สรุปผล'],['#/t/grade','📝 ตรวจงาน'],['#/t/assign','📌 งานที่มอบหมาย'],['#/t/media','🎞️ สื่อการเรียน'],['#/t/roster','👥 รายชื่อ'],['#/home','📚 ดูบทเรียน']]
+    : [['#/home','🏠 หน้าหลัก'],['#/assign','📝 งานของฉัน'],['#/media','🎞️ สื่อการเรียน']];
+  const initial = esc((S.profile.full_name || '?').trim().charAt(0));
+  app.innerHTML = `<header class="top"><span class="brand">🖥️ ${esc(CFG.COURSE_TITLE)}</span>
+    <nav>${nav.map(n => `<a href="${n[0]}" data-nav="${n[0]}">${n[1]}</a>`).join('')}</nav>
+    <div class="me"><a href="#/profile">${S.avatarUrl ? `<img class="avatar" src="${esc(S.avatarUrl)}" alt="">` : `<span class="avatar">${initial}</span>`}<span>${esc(S.profile.full_name)}</span></a>
+    <button class="btn sm ghost" id="btn-out">ออก</button></div></header><main id="main"></main>`;
+  $('#btn-out').onclick = logout;
+  route();
+}
+
+let routeTok = 0;
+async function route() {
+  const main = $('#main'); if (!main || !S.profile) return;
+  const tok = ++routeTok;
+  const parts = (location.hash || '').replace(/^#\/?/, '').split('/');
+  const name = parts[0] || '', t = isT();
+  if (!name || (t && ['assign', 'media'].includes(name))) { location.hash = t ? '#/t/summary' : '#/home'; return; }
+  if (!t && name === 't') { location.hash = '#/home'; return; }
+  document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', location.hash === a.dataset.nav || (name === 'lesson' && a.dataset.nav === '#/home')));
+  main.innerHTML = '<div class="loading">⏳ กำลังโหลด...</div>';
+  const el = document.createElement('div');
+  try {
+    if (name === 'home') await viewHome(el);
+    else if (name === 'lesson') await viewLesson(el, parts[1]);
+    else if (name === 'assign') await viewAssign(el);
+    else if (name === 'media') await viewMedia(el);
+    else if (name === 'profile') await viewProfile(el);
+    else if (name === 't' && parts[1] === 'summary') await viewTSummary(el);
+    else if (name === 't' && parts[1] === 'grade') await viewTGrade(el);
+    else if (name === 't' && parts[1] === 'assign') await viewTAssign(el);
+    else if (name === 't' && parts[1] === 'media') await viewTMedia(el);
+    else if (name === 't' && parts[1] === 'roster') await viewTRoster(el);
+    else el.innerHTML = '<div class="notice err">ไม่พบหน้านี้</div>';
+  } catch (e) { console.error(e); el.innerHTML = `<div class="notice err">${esc(thaiErr(e))}</div>`; }
+  if (tok === routeTok) main.replaceChildren(el);
+}
+window.addEventListener('hashchange', () => { if (S.profile) route(); });
+
+/* =====================================================================
+   หน้าของผู้เรียน (ผู้สอนดูบทเรียนได้ด้วย)
+   ===================================================================== */
+async function saveProg(key, done, total) {
+  if (!isStudent()) return;
+  const { error } = await sb.from('progress').upsert({
+    user_id: S.profile.id, lesson_key: key, sections_done: done, sections_total: total,
+    completed: done >= total, updated_at: new Date().toISOString()
+  }, { onConflict: 'user_id,lesson_key' });
+  if (error) throw error;
+}
+
+async function viewHome(el) {
+  const st = isStudent(); let prog = [], best = [], asg = [], sub = [];
+  if (st) {
+    const uid = S.profile.id;
+    [prog, best, asg, sub] = await Promise.all([
+      must(sb.from('progress').select('*').eq('user_id', uid)),
+      must(sb.from('v_quiz_best').select('*').eq('user_id', uid)),
+      must(sb.from('assignments').select('*').order('created_at')),
+      must(sb.from('submissions').select('assignment_id,score').eq('user_id', uid))]);
+  }
+  const pm = Object.fromEntries(prog.map(p => [p.lesson_key, p]));
+  const bm = Object.fromEntries(best.map(b => [b.lesson_key, b]));
+  const avg = Math.round(LESSONS.reduce((a, l) => a + pct(pm[l.key]), 0) / LESSONS.length);
+  const done = new Set(sub.map(s => s.assignment_id));
+  const todo = asg.filter(a => !done.has(a.id));
+  el.innerHTML = `<h2>${st ? `สวัสดี ${esc(S.profile.full_name)} 👋` : '📚 บทเรียนทั้งหมด (มุมมองผู้สอน)'}</h2>
+    ${st ? `<div class="card"><b>ความก้าวหน้ารวม ${avg}%</b><div class="bar"><i style="width:${avg}%"></i></div>
+      ${todo.length ? `<div class="notice">📝 มีงานที่ยังไม่ได้ส่ง ${todo.length} งาน <a href="#/assign">ไปส่งงาน</a></div>` : ''}</div>` : ''}
+    <div class="grid">${LESSONS.map((l, i) => { const p = pm[l.key], b = bm[l.key]; return `
+      <a class="lcard" href="#/lesson/${l.key}"><div class="ic">${l.icon}</div><b>บทที่ ${i + 1}</b><div>${esc(l.title)}</div>
+      ${st ? `<div class="bar"><i style="width:${pct(p)}%"></i></div><small class="muted">เรียนแล้ว ${pct(p)}%${b ? ` · คะแนนสอบสูงสุด ${b.best_score}/${b.total}` : ' · ยังไม่ได้สอบ'}</small>` : ''}</a>`; }).join('')}</div>`;
+}
+
+async function viewLesson(el, key) {
+  const idx0 = LESSONS.findIndex(l => l.key === key);
+  if (idx0 < 0) { el.innerHTML = '<div class="notice err">ไม่พบบทเรียน</div>'; return; }
+  const L = LESSONS[idx0], total = L.sections.length;
+  let done = 0;
+  if (isStudent()) {
+    const p = await must(sb.from('progress').select('*').eq('user_id', S.profile.id).eq('lesson_key', key).maybeSingle());
+    done = p ? p.sections_done : 0;
+  }
+  let idx = Math.max(0, Math.min(done - 1, total - 1));
+  el.innerHTML = `<a class="back" href="#/home">← กลับหน้าหลัก</a><h2>${L.icon} บทที่ ${idx0 + 1}: ${esc(L.title)}</h2>
+    <div class="tabs" id="ltab"><button data-t="c">📖 เนื้อหา</button><button data-t="m">🎞️ สื่อการเรียน</button><button data-t="q">✏️ แบบทดสอบ</button></div>
+    <div id="tc"></div><div id="tm" hidden></div><div id="tq" hidden></div>`;
+  const tc = $('#tc', el), tm = $('#tm', el), tq = $('#tq', el);
+  const loaded = { m: false, q: false };
+  function tab(t) {
+    el.querySelectorAll('#ltab button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+    tc.hidden = t !== 'c'; tm.hidden = t !== 'm'; tq.hidden = t !== 'q';
+    if (t === 'm' && !loaded.m) { loaded.m = true; loadMedia(); }
+    if (t === 'q' && !loaded.q) { loaded.q = true; loadQuiz(tq, key); }
+  }
+  el.querySelectorAll('#ltab button').forEach(b => b.onclick = () => tab(b.dataset.t));
+  function step() {
+    const s = L.sections[idx];
+    tc.innerHTML = `<div class="card"><div class="dots">${L.sections.map((_, i) => `<i class="${i <= idx ? 'on' : ''}"></i>`).join('')}</div>
+      <h3>${esc(s.t)}</h3><div class="lesson">${s.html}</div>
+      <div class="nav"><button class="btn ghost" id="prev" ${idx === 0 ? 'disabled' : ''}>◀ ก่อนหน้า</button><span>${idx + 1} / ${total}</span>
+      <button class="btn" id="next">${idx === total - 1 ? 'ไปทำแบบทดสอบ ▶' : 'ถัดไป ▶'}</button></div></div>`;
+    if (idx + 1 > done) { done = idx + 1; saveProg(key, done, total).catch(e => toast(thaiErr(e), 'err')); }
+    $('#prev', tc).onclick = () => { idx--; step(); };
+    $('#next', tc).onclick = () => { if (idx === total - 1) { tab('q'); } else { idx++; step(); window.scrollTo(0, 0); } };
+  }
+  async function loadMedia() {
+    tm.innerHTML = '<div class="loading">⏳</div>';
+    try {
+      const rows = await must(sb.from('media').select('*').eq('lesson_key', key).order('created_at'));
+      tm.innerHTML = rows.length ? rows.map(m => mediaItem(m, false)).join('') : '<p class="muted">บทนี้ยังไม่มีสื่อเพิ่มเติม</p>';
+    } catch (e) { tm.innerHTML = `<div class="notice err">${esc(thaiErr(e))}</div>`; }
+  }
+  step(); tab('c');
+}
+
+async function loadQuiz(box, key) {
+  box.innerHTML = '<div class="loading">⏳</div>';
+  let qs;
+  try { qs = await must(sb.rpc('get_quiz', { p_lesson: key })); }
+  catch (e) { box.innerHTML = `<div class="notice err">${esc(thaiErr(e))}</div>`; return; }
+  if (!qs.length) { box.innerHTML = '<p class="muted">บทนี้ยังไม่มีข้อสอบ</p>'; return; }
+  box.innerHTML = `<div class="card"><p class="muted">ตอบให้ครบทุกข้อ แล้วกด "ส่งคำตอบ" ${isStudent() ? '(ทำซ้ำได้ ระบบเก็บคะแนนสูงสุด)' : '(ผู้สอนทดลองทำได้ ไม่บันทึกคะแนน)'}</p>
+    ${qs.map((q, i) => `<fieldset class="q" data-i="${i}"><legend>${i + 1}. ${esc(q.question)}</legend>
+      ${q.choices.map((c, j) => `<label class="opt"><input type="radio" name="q${i}" value="${j}"> ${esc(c)}</label>`).join('')}
+      <div class="expl" hidden></div></fieldset>`).join('')}
+    <p><button class="btn" id="qsub">ส่งคำตอบ</button></p><div id="qres"></div></div>`;
+  $('#qsub', box).onclick = ev => act(ev.target, async () => {
+    const ans = qs.map((_, i) => { const r = box.querySelector(`input[name=q${i}]:checked`); return r ? Number(r.value) : -1; });
+    if (ans.includes(-1)) throw new Error('กรุณาตอบให้ครบทุกข้อก่อนส่ง');
+    const res = await must(sb.rpc('submit_quiz', { p_lesson: key, p_answers: ans }));
+    res.results.forEach((r, i) => {
+      const fs = box.querySelector(`fieldset[data-i="${i}"]`);
+      fs.classList.add(r.correct ? 'right' : 'wrong');
+      fs.querySelectorAll('input').forEach(x => x.disabled = true);
+      const ex = fs.querySelector('.expl'); ex.hidden = false;
+      ex.innerHTML = (r.correct ? '✅ ถูกต้อง' : `❌ ยังไม่ถูก เฉลย: ข้อ ${r.correct_index + 1}`) + (r.explanation ? ' — ' + esc(r.explanation) : '');
+    });
+    $('#qres', box).innerHTML = `<div class="notice ${res.score === res.total ? 'ok' : ''}"><span class="score">ได้ ${res.score} / ${res.total} คะแนน</span> ${res.score === res.total ? '🎉 เก่งมาก!' : 'ลองทบทวนเนื้อหาแล้วทำใหม่ได้'}
+      ${res.saved ? '' : '<br><small>(โหมดผู้สอน ไม่บันทึกคะแนน)</small>'}<p><button class="btn ghost" id="qretry">ทำใหม่</button></p></div>`;
+    $('#qsub', box).hidden = true;
+    $('#qretry', box).onclick = () => loadQuiz(box, key);
+  });
+}
+
+async function viewAssign(el) {
+  const uid = S.profile.id;
+  const [asg, sub] = await Promise.all([
+    must(sb.from('assignments').select('*').order('created_at')),
+    must(sb.from('submissions').select('*').eq('user_id', uid))]);
+  const sm = Object.fromEntries(sub.map(s => [s.assignment_id, s]));
+  el.innerHTML = `<h2>📝 งานของฉัน</h2>` + (asg.length ? asg.map(a => {
+    const s = sm[a.id], graded = s && s.score !== null;
+    const status = !s ? '<span class="badge no">ยังไม่ส่ง</span>' : graded ? `<span class="badge ok">ตรวจแล้ว ${s.score}/${a.max_score}</span>` : '<span class="badge wait">ส่งแล้ว รอครูตรวจ</span>';
+    return `<div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">${esc(a.title)}</h3>${status}</div>
+      <div class="muted">${a.lesson_key ? esc(lessonTitle(a.lesson_key)) + ' · ' : ''}คะแนนเต็ม ${a.max_score}${a.due_date ? ' · กำหนดส่ง ' + esc(fmtDay(a.due_date)) : ''}</div>
+      <p>${esc(a.description || '').replace(/\n/g, '<br>')}</p>
+      ${s ? `<div>ไฟล์ที่ส่ง: <a href="#" data-open="${esc(s.file_path)}" data-bucket="submissions">${esc(s.file_name)}</a> <small class="muted">(${esc(fmtDate(s.submitted_at))})</small></div>` : ''}
+      ${graded ? `<div class="notice ok">💬 ความเห็นครู: ${esc(s.feedback || '-')}</div>` : `
+      <form class="sub" data-id="${esc(a.id)}"><label class="f">${s ? 'ส่งใหม่ (แทนไฟล์เดิม)' : 'เลือกไฟล์งาน'} (ไม่เกิน 10 MB)</label>
+        <input type="file" name="file" required>
+        <label class="f">ข้อความถึงครู (ถ้ามี)</label><input type="text" name="note" maxlength="300">
+        <p><button class="btn" type="submit">${s ? 'ส่งใหม่' : 'ส่งงาน'}</button></p></form>`}
+    </div>`; }).join('') : '<p class="muted">ยังไม่มีงานที่มอบหมาย</p>');
+  const OK = ['pdf','jpg','jpeg','png','webp','doc','docx','ppt','pptx','xls','xlsx','txt','sb3','zip'];
+  el.querySelectorAll('form.sub').forEach(f => f.onsubmit = e => { e.preventDefault();
+    act(f.querySelector('button'), async () => {
+      const file = f.file.files[0]; if (!file) throw new Error('กรุณาเลือกไฟล์');
+      if (file.size > 10 * 1024 * 1024) throw new Error('ไฟล์ใหญ่เกิน 10 MB');
+      if (!OK.includes(extOf(file.name))) throw new Error('ชนิดไฟล์ที่ส่งได้: ' + OK.join(', '));
+      const aid = f.dataset.id;
+      const path = `${uid}/${aid}/${Date.now()}_${safeName(file.name)}`;
+      const up = await sb.storage.from('submissions').upload(path, file, { upsert: false, contentType: file.type || 'application/octet-stream' });
+      if (up.error) throw up.error;
+      await must(sb.rpc('submit_assignment', { p_assignment: aid, p_path: path, p_name: file.name, p_note: f.note.value }));
+      toast('ส่งงานเรียบร้อย'); await route();
+    }); });
+}
+
+async function viewMedia(el) {
+  const rows = await must(sb.from('media').select('*').order('created_at', { ascending: false }));
+  el.innerHTML = `<h2>🎞️ สื่อการเรียน</h2>` + (rows.length ? rows.map(m => mediaItem(m, false)).join('') : '<p class="muted">ยังไม่มีสื่อที่ครูอัปโหลด</p>');
+}
+
+async function viewProfile(el) {
+  const p = S.profile;
+  el.innerHTML = `<h2>👤 โปรไฟล์</h2><div class="two">
+    <div class="card"><div style="text-align:center">${S.avatarUrl ? `<img class="avatar big" src="${esc(S.avatarUrl)}" alt="">` : `<span class="avatar big">${esc((p.full_name || '?').charAt(0))}</span>`}</div>
+      <h3 style="text-align:center">${esc(p.full_name)}</h3>
+      <p class="muted" style="text-align:center">${p.student_id ? 'รหัสนักเรียน ' + esc(p.student_id) : 'ผู้สอน'}</p>
+      <label class="f">เปลี่ยนรูปโปรไฟล์ (JPG/PNG/WEBP ไม่เกิน 2 MB)</label><input type="file" id="avf" accept="image/jpeg,image/png,image/webp">
+      <p><button class="btn" id="avb">อัปโหลดรูป</button></p></div>
+    <div class="card"><h3>เปลี่ยนรหัสผ่าน</h3>
+      <label class="f">รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร)</label><input type="password" id="pw1" autocomplete="new-password">
+      <label class="f">พิมพ์อีกครั้ง</label><input type="password" id="pw2" autocomplete="new-password">
+      <p><button class="btn warn" id="pwb">เปลี่ยนรหัสผ่าน</button></p></div></div>`;
+  $('#avb', el).onclick = e => act(e.target, async () => {
+    const f = $('#avf', el).files[0]; if (!f) throw new Error('กรุณาเลือกรูป');
+    const ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }[f.type];
+    if (!ext) throw new Error('ใช้ได้เฉพาะไฟล์ JPG, PNG หรือ WEBP');
+    if (f.size > 2 * 1024 * 1024) throw new Error('รูปใหญ่เกิน 2 MB');
+    const path = `${p.id}/avatar_${Date.now()}.${ext}`;
+    const up = await sb.storage.from('avatars').upload(path, f, { contentType: f.type });
+    if (up.error) throw up.error;
+    const r = await sb.from('profiles').update({ avatar_path: path }).eq('id', p.id);
+    if (r.error) { await sb.storage.from('avatars').remove([path]); throw r.error; }
+    if (p.avatar_path) await sb.storage.from('avatars').remove([p.avatar_path]);
+    p.avatar_path = path; S.avatarUrl = await signed('avatars', path);
+    toast('เปลี่ยนรูปแล้ว'); render();
+  });
+  $('#pwb', el).onclick = e => act(e.target, async () => {
+    const a = $('#pw1', el).value, b = $('#pw2', el).value;
+    if (a.length < 6) throw new Error('รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร');
+    if (a !== b) throw new Error('รหัสผ่านสองครั้งไม่ตรงกัน');
+    const { error } = await sb.auth.updateUser({ password: a }); if (error) throw error;
+    $('#pw1', el).value = ''; $('#pw2', el).value = ''; toast('เปลี่ยนรหัสผ่านแล้ว');
+  });
+}
+
+/* =====================================================================
+   หน้าของผู้สอน
+   ===================================================================== */
+async function viewTSummary(el) {
+  const [roster, prog, qb, asg, sub] = await Promise.all([
+    must(sb.from('roster').select('*').order('student_id')),
+    must(sb.from('progress').select('*')),
+    must(sb.from('v_quiz_best').select('*')),
+    must(sb.from('assignments').select('*').order('created_at')),
+    must(sb.from('submissions').select('assignment_id,user_id,score'))]);
+  const classes = [...new Set(roster.map(r => r.class_room).filter(Boolean))].sort();
+  const head = ['รหัสนักเรียน', 'ชื่อ-สกุล', 'ห้อง', 'สถานะสมัคร', 'ความก้าวหน้าเฉลี่ย (%)',
+    ...LESSONS.map((l, i) => `คะแนนสอบ บทที่ ${i + 1}`), 'ส่งงาน (ชิ้น)', 'คะแนนงานที่ตรวจแล้ว', 'คะแนนเต็มงานที่ตรวจแล้ว'];
+  const maxOf = Object.fromEntries(asg.map(a => [a.id, a.max_score]));
+  function build(cls) {
+    return roster.filter(r => !cls || r.class_room === cls).map(r => {
+      const u = r.claimed_by;
+      if (!u) return [r.student_id, r.full_name, r.class_room || '', 'ยังไม่สมัคร', '', ...LESSONS.map(() => ''), '', '', ''];
+      const avg = Math.round(LESSONS.reduce((a, l) => a + pct(prog.find(p => p.user_id === u && p.lesson_key === l.key)), 0) / LESSONS.length);
+      const sc = LESSONS.map(l => { const b = qb.find(x => x.user_id === u && x.lesson_key === l.key); return b ? `${b.best_score}/${b.total}` : '-'; });
+      const mine = sub.filter(s => s.user_id === u), gr = mine.filter(s => s.score !== null);
+      return [r.student_id, r.full_name, r.class_room || '', 'สมัครแล้ว', avg, ...sc, `${mine.length}/${asg.length}`,
+        gr.reduce((a, s) => a + s.score, 0), gr.reduce((a, s) => a + (maxOf[s.assignment_id] || 0), 0)];
+    });
+  }
+  el.innerHTML = `<h2>📊 สรุปผลผู้เรียน</h2><div class="card row">
+    <label>ห้อง: <select id="cls" style="width:auto"><option value="">ทั้งหมด</option>${classes.map(c => `<option>${esc(c)}</option>`).join('')}</select></label>
+    <button class="btn" id="csv">⬇️ ส่งออก CSV</button><span class="muted" id="cnt"></span></div>
+    <div class="scroll"><table class="data" id="tb"></table></div>`;
+  const draw = () => { const rows = build($('#cls', el).value);
+    $('#tb', el).innerHTML = `<tr>${head.map(h => `<th>${esc(h)}</th>`).join('')}</tr>` + rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('');
+    $('#cnt', el).textContent = `${rows.length} คน`; return rows; };
+  $('#cls', el).onchange = draw; draw();
+  $('#csv', el).onclick = () => downloadCSV(`สรุปผล_${new Date().toISOString().slice(0, 10)}.csv`, [head, ...build($('#cls', el).value)]);
+}
+
+async function viewTGrade(el) {
+  const [asg, profs] = await Promise.all([
+    must(sb.from('assignments').select('*').order('created_at')),
+    must(sb.from('profiles').select('id,full_name,student_id').eq('role', 'student'))]);
+  if (!asg.length) { el.innerHTML = '<h2>📝 ตรวจงาน</h2><p class="muted">ยังไม่มีงานที่มอบหมาย</p>'; return; }
+  const pm = Object.fromEntries(profs.map(p => [p.id, p]));
+  el.innerHTML = `<h2>📝 ตรวจงาน</h2><div class="card"><label class="f">เลือกงาน</label>
+    <select id="asel">${asg.map(a => `<option value="${esc(a.id)}">${esc(a.title)}</option>`).join('')}</select></div><div id="subs"></div>`;
+  async function load() {
+    const a = asg.find(x => x.id === $('#asel', el).value), box = $('#subs', el);
+    box.innerHTML = '<div class="loading">⏳</div>';
+    const rows = await must(sb.from('submissions').select('*').eq('assignment_id', a.id).order('submitted_at'));
+    if (!rows.length) { box.innerHTML = '<p class="muted">ยังไม่มีนักเรียนส่งงานนี้</p>'; return; }
+    box.innerHTML = rows.map(s => { const p = pm[s.user_id] || {}; const late = a.due_date && new Date(s.submitted_at) > new Date(a.due_date + 'T23:59:59');
+      return `<div class="card"><div class="row" style="justify-content:space-between"><b>${esc(p.full_name || '(ไม่ทราบชื่อ)')} <small class="muted">${esc(p.student_id || '')}</small></b>
+        <span class="muted">${esc(fmtDate(s.submitted_at))} ${late ? '<span class="badge no">ส่งช้า</span>' : ''}</span></div>
+        <div>ไฟล์: <a href="#" data-open="${esc(s.file_path)}" data-bucket="submissions">${esc(s.file_name)}</a></div>
+        ${s.note ? `<div class="muted">ข้อความ: ${esc(s.note)}</div>` : ''}
+        <div class="row" style="margin-top:.5rem"><label>คะแนน (เต็ม ${a.max_score}) <input type="number" min="0" max="${a.max_score}" value="${s.score ?? ''}" data-sc style="width:90px"></label>
+        <input type="text" placeholder="ความเห็นถึงนักเรียน" value="${esc(s.feedback || '')}" data-fb style="flex:1;min-width:200px">
+        <button class="btn sm" data-save="${esc(s.id)}">บันทึก</button>
+        ${s.score !== null ? '<span class="badge ok">ตรวจแล้ว</span>' : '<span class="badge wait">รอตรวจ</span>'}</div></div>`; }).join('');
+    box.querySelectorAll('[data-save]').forEach(b => b.onclick = () => act(b, async () => {
+      const card = b.closest('.card'); const v = card.querySelector('[data-sc]').value;
+      if (v === '') throw new Error('กรุณาใส่คะแนน');
+      await must(sb.rpc('grade_submission', { p_id: b.dataset.save, p_score: Number(v), p_feedback: card.querySelector('[data-fb]').value }));
+      toast('บันทึกคะแนนแล้ว'); load();
+    }));
+  }
+  $('#asel', el).onchange = () => load().catch(e => toast(thaiErr(e), 'err')); await load();
+}
+
+async function viewTAssign(el) {
+  const asg = await must(sb.from('assignments').select('*').order('created_at', { ascending: false }));
+  el.innerHTML = `<h2>📌 งานที่มอบหมาย</h2><div class="card"><h3>สร้างงานใหม่</h3>
+    <form id="fa"><label class="f">ชื่องาน</label><input type="text" name="title" required maxlength="150">
+    <label class="f">รายละเอียด</label><textarea name="desc" rows="3"></textarea>
+    <div class="two"><div><label class="f">บทเรียนที่เกี่ยวข้อง</label><select name="lesson"><option value="">- ไม่ระบุ -</option>${LESSONS.map((l, i) => `<option value="${l.key}">บทที่ ${i + 1} ${esc(l.title)}</option>`).join('')}</select></div>
+    <div><label class="f">คะแนนเต็ม</label><input type="number" name="max" value="10" min="1" max="100" required></div></div>
+    <label class="f">กำหนดส่ง (ถ้ามี)</label><input type="date" name="due">
+    <p><button class="btn" type="submit">สร้างงาน</button></p></form></div>
+    ${asg.map(a => `<div class="card row" style="justify-content:space-between"><div><b>${esc(a.title)}</b>
+      <div class="muted">${a.lesson_key ? esc(lessonTitle(a.lesson_key)) + ' · ' : ''}เต็ม ${a.max_score}${a.due_date ? ' · ส่งภายใน ' + esc(fmtDay(a.due_date)) : ''}</div></div>
+      <button class="btn sm danger" data-del="${esc(a.id)}">ลบ</button></div>`).join('')}`;
+  $('#fa', el).onsubmit = e => { e.preventDefault(); const f = e.target;
+    act(f.querySelector('button'), async () => {
+      const r = await sb.from('assignments').insert({ title: f.title.value.trim(), description: f.desc.value.trim() || null,
+        lesson_key: f.lesson.value || null, max_score: Number(f.max.value), due_date: f.due.value || null });
+      if (r.error) throw r.error; toast('สร้างงานแล้ว'); route(); }); };
+  el.querySelectorAll('[data-del]').forEach(b => b.onclick = () => act(b, async () => {
+    if (!confirm('ลบงานนี้? งานที่นักเรียนส่งและคะแนนของงานนี้จะถูกลบด้วย')) return;
+    const r = await sb.from('assignments').delete().eq('id', b.dataset.del); if (r.error) throw r.error; toast('ลบแล้ว'); route(); }));
+}
+
+async function viewTMedia(el) {
+  const rows = await must(sb.from('media').select('*').order('created_at', { ascending: false }));
+  el.innerHTML = `<h2>🎞️ จัดการสื่อการเรียน</h2><div class="card"><h3>อัปโหลดสื่อใหม่</h3>
+    <form id="fm"><label class="f">ชื่อสื่อ</label><input type="text" name="title" required maxlength="150">
+    <label class="f">คำอธิบายสั้น ๆ</label><input type="text" name="desc" maxlength="300">
+    <label class="f">แสดงในบทเรียน</label><select name="lesson"><option value="">- ทั่วไป (ไม่ผูกกับบท) -</option>${LESSONS.map((l, i) => `<option value="${l.key}">บทที่ ${i + 1} ${esc(l.title)}</option>`).join('')}</select>
+    <label class="f">ไฟล์ (PDF, ภาพ, MP4, MP3, PPTX, DOCX ไม่เกิน 50 MB)</label><input type="file" name="file" required>
+    <p><button class="btn" type="submit">อัปโหลด</button></p></form></div>
+    ${rows.length ? rows.map(m => mediaItem(m, true)).join('') : '<p class="muted">ยังไม่มีสื่อ</p>'}`;
+  $('#fm', el).onsubmit = e => { e.preventDefault(); const f = e.target;
+    act(f.querySelector('button'), async () => {
+      const file = f.file.files[0]; if (!file) throw new Error('กรุณาเลือกไฟล์');
+      if (file.size > 50 * 1024 * 1024) throw new Error('ไฟล์ใหญ่เกิน 50 MB');
+      const path = `${Date.now()}_${safeName(file.name)}`;
+      const up = await sb.storage.from('media').upload(path, file, { upsert: false, contentType: file.type || 'application/octet-stream' });
+      if (up.error) throw up.error;
+      const r = await sb.from('media').insert({ title: f.title.value.trim(), description: f.desc.value.trim() || null,
+        lesson_key: f.lesson.value || null, storage_path: path, file_name: file.name, mime_type: file.type || null,
+        size_bytes: file.size, uploaded_by: S.profile.id });
+      if (r.error) { await sb.storage.from('media').remove([path]); throw r.error; }
+      toast('อัปโหลดแล้ว'); route(); }); };
+  el.querySelectorAll('[data-del-media]').forEach(b => b.onclick = () => act(b, async () => {
+    if (!confirm('ลบสื่อนี้?')) return;
+    const r = await sb.from('media').delete().eq('id', b.dataset.delMedia); if (r.error) throw r.error;
+    await sb.storage.from('media').remove([b.dataset.path]); toast('ลบแล้ว'); route(); }));
+}
+
+function parseRoster(txt) {
+  const map = new Map(), bad = [];
+  txt.replace(/^\ufeff/, '').split(/\r?\n/).forEach((ln, i) => {
+    if (!ln.trim()) return;
+    const c = ln.split(/[,\t]/).map(x => x.trim());
+    if (i === 0 && !/^\d+$/.test(c[0])) return;            // ข้ามบรรทัดหัวตาราง
+    if (!/^\d{11}$/.test(c[0] || '')) { bad.push(`บรรทัด ${i + 1}: รหัสต้องเป็นตัวเลข 11 หลัก`); return; }
+    if (!c[1]) { bad.push(`บรรทัด ${i + 1}: ไม่มีชื่อ`); return; }
+    map.set(c[0], { student_id: c[0], full_name: c[1], class_room: c[2] || null });
+  });
+  return { rows: [...map.values()], bad };
+}
+
+async function viewTRoster(el) {
+  const roster = await must(sb.from('roster').select('*').order('student_id'));
+  el.innerHTML = `<h2>👥 รายชื่อรายวิชา</h2><div class="card"><h3>นำเข้า/อัปเดตรายชื่อ</h3>
+    <p class="muted">วางข้อมูลทีละบรรทัด รูปแบบ: <code>รหัส 11 หลัก, ชื่อ-สกุล, ห้อง</code> (คัดลอกจาก Excel มาวางได้) ถ้ารหัสมีอยู่แล้วจะอัปเดตชื่อและห้อง</p>
+    <textarea id="rt" rows="6" placeholder="12345678901, ด.ช.สมชาย ใจดี, ป.5/1"></textarea>
+    <p><button class="btn" id="rimp">นำเข้า</button></p><div id="rmsg"></div></div>
+    <div class="card"><b>ทั้งหมด ${roster.length} คน · สมัครแล้ว ${roster.filter(r => r.claimed_by).length} คน</b>
+    <div class="scroll"><table class="data"><tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>ห้อง</th><th>สถานะ</th><th>จัดการ</th></tr>
+    ${roster.map(r => `<tr><td>${esc(r.student_id)}</td><td>${esc(r.full_name)}</td><td>${esc(r.class_room || '')}</td>
+      <td>${r.claimed_by ? '<span class="badge ok">สมัครแล้ว</span>' : '<span class="badge">ยังไม่สมัคร</span>'}</td>
+      <td>${r.claimed_by ? `<button class="btn sm warn" data-rp="${esc(r.student_id)}">รีเซ็ตรหัสผ่าน</button> <button class="btn sm danger" data-rel="${esc(r.student_id)}">ปล่อยรหัส</button>`
+        : `<button class="btn sm danger" data-rm="${esc(r.student_id)}">ลบ</button>`}</td></tr>`).join('')}</table></div></div>`;
+  $('#rimp', el).onclick = e => act(e.target, async () => {
+    const { rows, bad } = parseRoster($('#rt', el).value);
+    $('#rmsg', el).innerHTML = bad.length ? `<div class="notice err">${bad.map(esc).join('<br>')}</div>` : '';
+    if (!rows.length) throw new Error('ไม่พบข้อมูลที่นำเข้าได้');
+    const r = await sb.from('roster').upsert(rows, { onConflict: 'student_id' }); if (r.error) throw r.error;
+    toast(`นำเข้า ${rows.length} รายการ` + (bad.length ? ` (ข้าม ${bad.length})` : '')); if (!bad.length) route();
+  });
+  el.querySelectorAll('[data-rp]').forEach(b => b.onclick = () => act(b, async () => {
+    const pw = prompt('ตั้งรหัสผ่านใหม่ให้นักเรียนรหัส ' + b.dataset.rp + ' (อย่างน้อย 6 ตัวอักษร)'); if (!pw) return;
+    await must(sb.rpc('reset_student_password', { p_student_id: b.dataset.rp, p_new: pw })); toast('รีเซ็ตรหัสผ่านแล้ว'); }));
+  el.querySelectorAll('[data-rel]').forEach(b => b.onclick = () => act(b, async () => {
+    if (!confirm('ปล่อยรหัส ' + b.dataset.rel + '?\nบัญชีและข้อมูลทั้งหมดของนักเรียนคนนี้ (ความก้าวหน้า คะแนน งานที่ส่ง) จะถูกลบถาวร เพื่อให้สมัครใหม่ได้')) return;
+    await must(sb.rpc('release_student', { p_student_id: b.dataset.rel })); toast('ปล่อยรหัสแล้ว'); route(); }));
+  el.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => act(b, async () => {
+    if (!confirm('ลบรหัส ' + b.dataset.rm + ' ออกจากรายชื่อ?')) return;
+    const r = await sb.from('roster').delete().eq('student_id', b.dataset.rm); if (r.error) throw r.error; toast('ลบแล้ว'); route(); }));
+}
+
+/* =====================================================================
+   เริ่มทำงาน
+   ===================================================================== */
+(async function boot() {
+  if (!IS_CFG) { render(); return; }
+  try {
+    const { data } = await sb.auth.getSession();
+    await onSession(data.session);
+  } catch (e) { console.error(e); $('#app').innerHTML = `<main><div class="notice err">${esc(thaiErr(e))}</div></main>`; }
+})();
+</script>
+</body>
+</html>
